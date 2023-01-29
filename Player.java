@@ -21,6 +21,12 @@ public class Player {
 
     private BufferedImage bodyVerticalImage;
     private BufferedImage bodyHorizontalImage;
+
+    private BufferedImage bodyTopLeftImage;
+    private BufferedImage bodyTopRightImage;
+    private BufferedImage bodyBottomLeftImage;
+    private BufferedImage bodyBottomRightImage;
+
     // current position of the player on the board grid
     private Point pos;
     // keep track of the player's length
@@ -40,12 +46,19 @@ public class Player {
         loadImage();
 
         // initialize the state
-        pos = new Point(2, 2);
-        // posList.add(pos.x,pos.y);
-        length = 1;
+        pos = new Point(4, 2);
+        posList.add(new Point(2,2));
+        posList.add(new Point(3,2));
+        posList.add(new Point(4,2));
+
         direction = "Right";
-        directionList.add("Right");
         directionUpdate = "Right";
+        directionList.add("Right");
+        directionList.add("Right");
+        directionList.add("Right");
+        
+
+        length = 3;
         speed = 20;
         maxSpeed=speed;
     }
@@ -58,9 +71,14 @@ public class Player {
             headRightImage = ImageIO.read(new File("images/head_right.png"));
             headDownImage = ImageIO.read(new File("images/head_down.png"));
             headLeftImage = ImageIO.read(new File("images/head_left.png"));
+
             bodyHorizontalImage = ImageIO.read(new File("images/body_horizontal.png"));
             bodyVerticalImage = ImageIO.read(new File("images/body_vertical.png"));
 
+            bodyTopLeftImage = ImageIO.read(new File("images/body_topleft.png"));
+            bodyTopRightImage = ImageIO.read(new File("images/body_topright.png"));
+            bodyBottomLeftImage = ImageIO.read(new File("images/body_bottomleft.png"));
+            bodyBottomRightImage = ImageIO.read(new File("images/body_bottomright.png"));
         } catch (IOException exc) {
             System.out.println("Error opening image file: " + exc.getMessage());
         }
@@ -72,36 +90,69 @@ public class Player {
         // this is also where we translate board grid position into a canvas pixel
         // position by multiplying by the tile size.
         for(int i = 0; i < posList.size(); i++){
+            if(i==posList.size()-1){
+                switch(directionList.get(i)){
+            
+                    case "Up":
+                        g.drawImage(headUpImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+                    break;
         
-        if(directionList.get(i)=="Up"){
-        g.drawImage(
-            headUpImage, 
-            posList.get(i).x * Board.TILE_SIZE, 
-            posList.get(i).y * Board.TILE_SIZE, 
-            observer
-        );
-        }else if(directionList.get(i)=="Right"){
-            g.drawImage(
-            headRightImage, 
-            posList.get(i).x * Board.TILE_SIZE, 
-            posList.get(i).y * Board.TILE_SIZE, 
-            observer
-        );
-        }else if(directionList.get(i)=="Down"){
-            g.drawImage(
-            headDownImage, 
-            posList.get(i).x * Board.TILE_SIZE, 
-            posList.get(i).y * Board.TILE_SIZE, 
-            observer
-        );
-        }else if(directionList.get(i)=="Left"){
-            g.drawImage(
-            headLeftImage, 
-            posList.get(i).x * Board.TILE_SIZE, 
-            posList.get(i).y * Board.TILE_SIZE, 
-            observer
-        );
-        }else{System.out.println("Direction ERROR: direction= "+direction+". directionList(i)= "+directionList.get(i));}
+                    case "Right":
+                        g.drawImage(headRightImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+                    break;
+        
+                    case "Down":
+                        g.drawImage(headDownImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+                    break;
+        
+                    case "Left":
+                        g.drawImage(headLeftImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+                    break;
+                    
+                    default:
+                        System.out.println("Direction ERROR: direction= "+direction+". directionList(i)= "+directionList.get(i));
+                }
+
+            }else{
+
+
+        switch(directionList.get(i)){
+            
+            case "Up":
+                g.drawImage(bodyVerticalImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+            break;
+
+            case "Right":
+                g.drawImage(bodyHorizontalImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+            break;
+
+            case "Down":
+                g.drawImage(bodyVerticalImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+            break;
+
+            case "Left":
+                g.drawImage(bodyHorizontalImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+            break;
+            
+            case "UpLeft":
+
+            break;
+            
+            default:
+                System.out.println("Direction ERROR: direction= "+direction+". directionList(i)= "+directionList.get(i));
+        }
+
+        
+            
+
+
+        
+        
+        
+        
+    }
+
+
     }
     }
     
@@ -110,22 +161,38 @@ public class Player {
         // keyboard event so that we can compare it to KeyEvent constants
         int key = e.getKeyCode();
         
-        // depending on which arrow key was pressed, we're going to move the player by
-        // one whole tile for this input
-        if (key == KeyEvent.VK_UP) {
-            // pos.translate(0, -1);
+        //changing direction of snake based on key input
+        if (key == KeyEvent.VK_UP && direction != "Down" && direction != "Up") {
+            if(direction=="Right"){
+                directionList.set(length-1, "RightUp");
+            }else if(direction=="Left"){
+                directionList.set(length-1, "LeftUp");
+            }else{System.out.println("error direction not found. direction:"+direction);}
             direction = "Up";
         }
-        if (key == KeyEvent.VK_RIGHT) {
-            // pos.translate(1, 0);
-            direction = "Right";
-        }
-        if (key == KeyEvent.VK_DOWN) {
-            // pos.translate(0, 1);
+        if (key == KeyEvent.VK_DOWN && direction != "Up" && direction != "Down") {
+            if(direction=="Right"){
+                directionList.set(length-1, "RightDown");
+            }else if(direction=="Left"){
+                directionList.set(length-1, "LeftDown");
+            }else{System.out.println("error direction not found. direction:"+direction);}
             direction="Down";
         }
-        if (key == KeyEvent.VK_LEFT) {
-            // pos.translate(-1, 0);
+        if (key == KeyEvent.VK_RIGHT && direction != "Left" && direction != "Right") {
+            if(direction=="Up"){
+                directionList.set(length-1, "UpRight");
+            }else if(direction=="Down"){
+                directionList.set(length-1, "DownRight");
+            }else{System.out.println("error direction not found. direction:"+direction);}
+            direction = "Right";
+        }
+        
+        if (key == KeyEvent.VK_LEFT && direction != "Right" && direction != "Left") {
+            if(direction=="Up"){
+                directionList.set(length-1, "UpLeft");
+            }else if(direction=="Down"){
+                directionList.set(length-1, "DownLeft");
+            }else{System.out.println("error direction not found. direction:"+direction);}
             direction="Left";
         }
     }
@@ -138,6 +205,7 @@ public class Player {
             System.out.println("x: "+pos.getX());
             System.out.println("Y: "+pos.getY());
             
+            //moves snake based on direction 
             if(direction=="Up"){
                 pos.translate(0,-1);
             }else if(direction=="Right"){
@@ -152,11 +220,14 @@ public class Player {
             speed=maxSpeed;
 
             posList.add(new Point(pos.x,pos.y));
+
             directionList.add(new String(direction));
+
 
             if(posList.size()>length){
                 posList.remove(0);
             }
+
             if(directionList.size()>length){
                 directionList.remove(0);
             }

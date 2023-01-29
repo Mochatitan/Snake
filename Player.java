@@ -18,27 +18,34 @@ public class Player {
     private BufferedImage headRightImage;
     private BufferedImage headDownImage;
     private BufferedImage headLeftImage;
+
+    private BufferedImage bodyVerticalImage;
+    private BufferedImage bodyHorizontalImage;
     // current position of the player on the board grid
     private Point pos;
     // keep track of the player's length
     private int length;
-    //direction 0=up 1=right 2=down 3=left
-    public int direction;
+    
+    public String direction;
+    private String directionUpdate;
+
     private int speed;
     private int maxSpeed;
-    private int directionUpdate;
+  
+
     List<Point> posList = new ArrayList<Point>();
-    
+    List<String> directionList = new ArrayList<String>();
     public Player() {
         // load the assets
         loadImage();
 
         // initialize the state
         pos = new Point(2, 2);
-        posList.add(pos);
+        // posList.add(pos.x,pos.y);
         length = 1;
-        direction = 1;
-        directionUpdate = 1;
+        direction = "Right";
+        directionList.add("Right");
+        directionUpdate = "Right";
         speed = 20;
         maxSpeed=speed;
     }
@@ -51,6 +58,8 @@ public class Player {
             headRightImage = ImageIO.read(new File("images/head_right.png"));
             headDownImage = ImageIO.read(new File("images/head_down.png"));
             headLeftImage = ImageIO.read(new File("images/head_left.png"));
+            bodyHorizontalImage = ImageIO.read(new File("images/body_horizontal.png"));
+            bodyVerticalImage = ImageIO.read(new File("images/body_vertical.png"));
 
         } catch (IOException exc) {
             System.out.println("Error opening image file: " + exc.getMessage());
@@ -62,37 +71,37 @@ public class Player {
         // pos.x reliably returns an int. https://stackoverflow.com/a/30220114/4655368
         // this is also where we translate board grid position into a canvas pixel
         // position by multiplying by the tile size.
-        for(Point snake:posList){
+        for(int i = 0; i < posList.size(); i++){
         
-        if(directionUpdate==0){
+        if(directionList.get(i)=="Up"){
         g.drawImage(
             headUpImage, 
-            snake.x * Board.TILE_SIZE, 
-            snake.y * Board.TILE_SIZE, 
+            posList.get(i).x * Board.TILE_SIZE, 
+            posList.get(i).y * Board.TILE_SIZE, 
             observer
         );
-        }else if(directionUpdate==1){
+        }else if(directionList.get(i)=="Right"){
             g.drawImage(
             headRightImage, 
-            snake.x * Board.TILE_SIZE, 
-            snake.y * Board.TILE_SIZE, 
+            posList.get(i).x * Board.TILE_SIZE, 
+            posList.get(i).y * Board.TILE_SIZE, 
             observer
         );
-        }else if(directionUpdate==2){
+        }else if(directionList.get(i)=="Down"){
             g.drawImage(
             headDownImage, 
-            snake.x * Board.TILE_SIZE, 
-            snake.y * Board.TILE_SIZE, 
+            posList.get(i).x * Board.TILE_SIZE, 
+            posList.get(i).y * Board.TILE_SIZE, 
             observer
         );
-        }else if(directionUpdate==3){
+        }else if(directionList.get(i)=="Left"){
             g.drawImage(
             headLeftImage, 
-            snake.x * Board.TILE_SIZE, 
-            snake.y * Board.TILE_SIZE, 
+            posList.get(i).x * Board.TILE_SIZE, 
+            posList.get(i).y * Board.TILE_SIZE, 
             observer
         );
-        }else{System.out.println("Direction isnt 0,1,2,3 ERROR");}
+        }else{System.out.println("Direction ERROR: direction= "+direction+". directionList(i)= "+directionList.get(i));}
     }
     }
     
@@ -105,19 +114,19 @@ public class Player {
         // one whole tile for this input
         if (key == KeyEvent.VK_UP) {
             // pos.translate(0, -1);
-            direction = 0;
+            direction = "Up";
         }
         if (key == KeyEvent.VK_RIGHT) {
             // pos.translate(1, 0);
-            direction = 1;
+            direction = "Right";
         }
         if (key == KeyEvent.VK_DOWN) {
             // pos.translate(0, 1);
-            direction=2;
+            direction="Down";
         }
         if (key == KeyEvent.VK_LEFT) {
             // pos.translate(-1, 0);
-            direction=3;
+            direction="Left";
         }
     }
 
@@ -129,13 +138,13 @@ public class Player {
             System.out.println("x: "+pos.getX());
             System.out.println("Y: "+pos.getY());
             
-            if(direction==0){
+            if(direction=="Up"){
                 pos.translate(0,-1);
-            }else if(direction==1){
+            }else if(direction=="Right"){
                 pos.translate(1,0);
-            }else if(direction==2){
+            }else if(direction=="Down"){
                 pos.translate(0,1);
-            }else if(direction==3){
+            }else if(direction=="Left"){
                 pos.translate(-1,0);
             }
 
@@ -143,20 +152,26 @@ public class Player {
             speed=maxSpeed;
 
             posList.add(new Point(pos.x,pos.y));
+            directionList.add(new String(direction));
 
             if(posList.size()>length){
                 posList.remove(0);
             }
+            if(directionList.size()>length){
+                directionList.remove(0);
+            }
+            for(String vegetable:directionList){
+            System.out.println(vegetable);
+        }
+        System.out.println("break");
 
 
         }else{
             speed--;
         }
         
-        for(Point fruit:posList){
-            System.out.println(fruit);
-        }
-        System.out.println("break");
+        
+        
         
         
 
@@ -186,7 +201,7 @@ public class Player {
         return pos;
     }
 
-    public int getDirection(){
+    public String getDirection(){
         return direction;
     }
 

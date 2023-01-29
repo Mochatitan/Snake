@@ -62,35 +62,38 @@ public class Player {
         // pos.x reliably returns an int. https://stackoverflow.com/a/30220114/4655368
         // this is also where we translate board grid position into a canvas pixel
         // position by multiplying by the tile size.
+        for(Point snake:posList){
+        
         if(directionUpdate==0){
         g.drawImage(
             headUpImage, 
-            pos.x * Board.TILE_SIZE, 
-            pos.y * Board.TILE_SIZE, 
+            snake.x * Board.TILE_SIZE, 
+            snake.y * Board.TILE_SIZE, 
             observer
         );
         }else if(directionUpdate==1){
             g.drawImage(
             headRightImage, 
-            pos.x * Board.TILE_SIZE, 
-            pos.y * Board.TILE_SIZE, 
+            snake.x * Board.TILE_SIZE, 
+            snake.y * Board.TILE_SIZE, 
             observer
         );
         }else if(directionUpdate==2){
             g.drawImage(
             headDownImage, 
-            pos.x * Board.TILE_SIZE, 
-            pos.y * Board.TILE_SIZE, 
+            snake.x * Board.TILE_SIZE, 
+            snake.y * Board.TILE_SIZE, 
             observer
         );
         }else if(directionUpdate==3){
             g.drawImage(
             headLeftImage, 
-            pos.x * Board.TILE_SIZE, 
-            pos.y * Board.TILE_SIZE, 
+            snake.x * Board.TILE_SIZE, 
+            snake.y * Board.TILE_SIZE, 
             observer
         );
         }else{System.out.println("Direction isnt 0,1,2,3 ERROR");}
+    }
     }
     
     public void keyPressed(KeyEvent e) {
@@ -139,20 +142,11 @@ public class Player {
             directionUpdate=direction;
             speed=maxSpeed;
 
-            posList.add(pos);
+            posList.add(new Point(pos.x,pos.y));
 
             if(posList.size()>length){
                 posList.remove(0);
             }
-
-            // System.out.println("speed is zero time");
-            // for(Point fruit:posList){
-            //     System.out.println(fruit);
-            // }
-            // System.out.println("length:");
-            // System.out.println("break");
-            
-           
 
 
         }else{

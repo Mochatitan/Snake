@@ -5,7 +5,10 @@ import java.awt.image.ImageObserver;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+
+
 import javax.imageio.ImageIO;
+
 
 public class Player {
 
@@ -15,6 +18,10 @@ public class Player {
     private Point pos;
     // keep track of the player's score
     private int score;
+    //direction 0=up 1=right 2=down 3=left
+    public int direction;
+    private int speed;
+    private int maxSpeed;
 
     public Player() {
         // load the assets
@@ -23,6 +30,9 @@ public class Player {
         // initialize the state
         pos = new Point(0, 0);
         score = 0;
+        direction = 1;
+        speed = 5;
+        maxSpeed=5;
     }
 
     private void loadImage() {
@@ -56,22 +66,43 @@ public class Player {
         // depending on which arrow key was pressed, we're going to move the player by
         // one whole tile for this input
         if (key == KeyEvent.VK_UP) {
-            pos.translate(0, -1);
+            // pos.translate(0, -1);
+            direction = 0;
         }
         if (key == KeyEvent.VK_RIGHT) {
-            pos.translate(1, 0);
+            // pos.translate(1, 0);
+            direction = 1;
         }
         if (key == KeyEvent.VK_DOWN) {
-            pos.translate(0, 1);
+            // pos.translate(0, 1);
+            direction=2;
         }
         if (key == KeyEvent.VK_LEFT) {
-            pos.translate(-1, 0);
+            // pos.translate(-1, 0);
+            direction=3;
         }
     }
 
     public void tick() {
         // this gets called once every tick, before the repainting process happens.
         // so we can do anything needed in here to update the state of the player.
+        if(speed==0){
+            System.out.println(direction);
+            if(direction==0){
+                pos.translate(0,-1);
+            }else if(direction==1){
+                pos.translate(1,0);
+            }else if(direction==2){
+                pos.translate(0,1);
+            }else if(direction==3){
+                pos.translate(-1,0);
+            }
+            speed=maxSpeed;
+        }else{
+            speed--;
+        }
+        
+        
 
         // prevent the player from moving off the edge of the board sideways
         if (pos.x < 0) {
@@ -97,6 +128,10 @@ public class Player {
 
     public Point getPos() {
         return pos;
+    }
+
+    public int getDirection(){
+        return direction;
     }
 
 }

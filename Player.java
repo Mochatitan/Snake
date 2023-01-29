@@ -5,7 +5,8 @@ import java.awt.image.ImageObserver;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -13,33 +14,44 @@ import javax.imageio.ImageIO;
 public class Player {
 
     // image that represents the player's position on the board
-    private BufferedImage image;
+    private BufferedImage headUpImage;
+    private BufferedImage headRightImage;
+    private BufferedImage headDownImage;
+    private BufferedImage headLeftImage;
     // current position of the player on the board grid
     private Point pos;
-    // keep track of the player's score
-    private int score;
+    // keep track of the player's length
+    private int length;
     //direction 0=up 1=right 2=down 3=left
     public int direction;
     private int speed;
     private int maxSpeed;
-
+    private int directionUpdate;
+    List<Point> posList = new ArrayList<Point>();
+    
     public Player() {
         // load the assets
         loadImage();
 
         // initialize the state
-        pos = new Point(0, 0);
-        score = 0;
+        pos = new Point(2, 2);
+        posList.add(pos);
+        length = 1;
         direction = 1;
-        speed = 5;
-        maxSpeed=5;
+        directionUpdate = 1;
+        speed = 20;
+        maxSpeed=speed;
     }
 
     private void loadImage() {
         try {
             // you can use just the filename if the image file is in your
             // project folder, otherwise you need to provide the file path.
-            image = ImageIO.read(new File("images/player.png"));
+            headUpImage = ImageIO.read(new File("images/head_up.png"));
+            headRightImage = ImageIO.read(new File("images/head_right.png"));
+            headDownImage = ImageIO.read(new File("images/head_down.png"));
+            headLeftImage = ImageIO.read(new File("images/head_left.png"));
+
         } catch (IOException exc) {
             System.out.println("Error opening image file: " + exc.getMessage());
         }
@@ -50,12 +62,35 @@ public class Player {
         // pos.x reliably returns an int. https://stackoverflow.com/a/30220114/4655368
         // this is also where we translate board grid position into a canvas pixel
         // position by multiplying by the tile size.
+        if(directionUpdate==0){
         g.drawImage(
-            image, 
+            headUpImage, 
             pos.x * Board.TILE_SIZE, 
             pos.y * Board.TILE_SIZE, 
             observer
         );
+        }else if(directionUpdate==1){
+            g.drawImage(
+            headRightImage, 
+            pos.x * Board.TILE_SIZE, 
+            pos.y * Board.TILE_SIZE, 
+            observer
+        );
+        }else if(directionUpdate==2){
+            g.drawImage(
+            headDownImage, 
+            pos.x * Board.TILE_SIZE, 
+            pos.y * Board.TILE_SIZE, 
+            observer
+        );
+        }else if(directionUpdate==3){
+            g.drawImage(
+            headLeftImage, 
+            pos.x * Board.TILE_SIZE, 
+            pos.y * Board.TILE_SIZE, 
+            observer
+        );
+        }else{System.out.println("Direction isnt 0,1,2,3 ERROR");}
     }
     
     public void keyPressed(KeyEvent e) {
@@ -87,7 +122,10 @@ public class Player {
         // this gets called once every tick, before the repainting process happens.
         // so we can do anything needed in here to update the state of the player.
         if(speed==0){
-            System.out.println(direction);
+            //called every time the snake moves
+            System.out.println("x: "+pos.getX());
+            System.out.println("Y: "+pos.getY());
+            
             if(direction==0){
                 pos.translate(0,-1);
             }else if(direction==1){
@@ -97,10 +135,34 @@ public class Player {
             }else if(direction==3){
                 pos.translate(-1,0);
             }
+
+            directionUpdate=direction;
             speed=maxSpeed;
+
+            posList.add(pos);
+
+            if(posList.size()>length){
+                posList.remove(0);
+            }
+
+            // System.out.println("speed is zero time");
+            // for(Point fruit:posList){
+            //     System.out.println(fruit);
+            // }
+            // System.out.println("length:");
+            // System.out.println("break");
+            
+           
+
+
         }else{
             speed--;
         }
+        
+        for(Point fruit:posList){
+            System.out.println(fruit);
+        }
+        System.out.println("break");
         
         
 
@@ -119,11 +181,11 @@ public class Player {
     }
 
     public String getScore() {
-        return String.valueOf(score);
+        return String.valueOf(length);
     }
 
     public void addScore(int amount) {
-        score += amount;
+        length += amount;
     }
 
     public Point getPos() {

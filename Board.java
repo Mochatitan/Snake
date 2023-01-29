@@ -12,8 +12,8 @@ public class Board extends JPanel implements ActionListener, KeyListener {
     public static final int TILE_SIZE = 50;
     public static final int ROWS = 12;
     public static final int COLUMNS = 18;
-    // controls how many coins appear on the board
-    public static final int NUM_COINS = 5;
+    // controls how many apples appear on the board
+    public static final int NUM_APPLES = 5;
     // suppress serialization warning
     private static final long serialVersionUID = 490905409104883233L;
     
@@ -22,7 +22,7 @@ public class Board extends JPanel implements ActionListener, KeyListener {
     private Timer timer;
     // objects that appear on the game board
     private Player player;
-    private ArrayList<Coin> coins;
+    private ArrayList<Apple> apples;
 
     public Board() {
         // set the game board size
@@ -32,7 +32,7 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 
         // initialize the game state
         player = new Player();
-        coins = populateCoins();
+        apples = populateApples();
 
         // this timer will call the actionPerformed() method every DELAY ms
         timer = new Timer(DELAY, this);
@@ -45,11 +45,13 @@ public class Board extends JPanel implements ActionListener, KeyListener {
         // use this space to update the state of your game or animation
         // before the graphics are redrawn.
 
+        // give the player points for collecting apples
+        collectApples();
+        
         // prevent the player from disappearing off the board
         player.tick();
 
-        // give the player points for collecting coins
-        collectCoins();
+        
 
         // calling repaint() will trigger paintComponent() to run again,
         // which will refresh/redraw the graphics.
@@ -67,9 +69,11 @@ public class Board extends JPanel implements ActionListener, KeyListener {
         // draw our graphics.
         drawBackground(g);
         drawScore(g);
-        for (Coin coin : coins) {
-            coin.draw(g, this);
+
+        for (Apple apple : apples) {
+            apple.draw(g, this);
         }
+
         player.draw(g, this);
 
         // this smooths out animations on some systems
@@ -113,7 +117,7 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 
     private void drawScore(Graphics g) {
         // set the text to be displayed
-        String text = "$" + player.getScore();
+        String text = "Size: " + player.getScore();
         // we need to cast the Graphics to Graphics2D to draw nicer text
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
@@ -143,35 +147,35 @@ public class Board extends JPanel implements ActionListener, KeyListener {
         g2d.drawString(text, x, y);
     }
 
-    private ArrayList<Coin> populateCoins() {
-        ArrayList<Coin> coinList = new ArrayList<>();
+    private ArrayList<Apple> populateApples() {
+        ArrayList<Apple> appleList = new ArrayList<>();
         Random rand = new Random();
 
-        // create the given number of coins in random positions on the board.
-        // note that there is not check here to prevent two coins from occupying the same
-        // spot, nor to prevent coins from spawning in the same spot as the player
-        for (int i = 0; i < NUM_COINS; i++) {
-            int coinX = rand.nextInt(COLUMNS);
-            int coinY = rand.nextInt(ROWS);
-            coinList.add(new Coin(coinX, coinY));
+        // create the given number of apples in random positions on the board.
+        // note that there is not check here to prevent two apples from occupying the same
+        // spot, nor to prevent apples from spawning in the same spot as the player
+        for (int i = 0; i < NUM_APPLES; i++) {
+            int appleX = rand.nextInt(COLUMNS);
+            int appleY = rand.nextInt(ROWS);
+            appleList.add(new Apple(appleX, appleY));
         }
 
-        return coinList;
+        return appleList;
     }
 
-    private void collectCoins() {
-        // allow player to pickup coins
-        ArrayList<Coin> collectedCoins = new ArrayList<>();
-        for (Coin coin : coins) {
-            // if the player is on the same tile as a coin, collect it
-            if (player.getPos().equals(coin.getPos())) {
+    private void collectApples() {
+        // allow player to pickup apples
+        ArrayList<Apple> collectedApples = new ArrayList<>();
+        for (Apple apple : apples) {
+            // if the player is on the same tile as a apple, collect it
+            if (player.getPos().equals(apple.getPos())) {
                 // give the player some points for picking this up
-                player.addScore(100);
-                collectedCoins.add(coin);
+                player.addScore(1);
+                collectedApples.add(apple);
             }
         }
-        // remove collected coins from the board
-        coins.removeAll(collectedCoins);
+        // remove collected apples from the board
+        apples.removeAll(collectedApples);
     }
 
 }

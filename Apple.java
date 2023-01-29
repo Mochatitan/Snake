@@ -6,14 +6,14 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class Coin {
+public class Apple {
     
     // image that represents the coin's position on the board
     private BufferedImage image;
     // current position of the coin on the board grid
     private Point pos;
 
-    public Coin(int x, int y) {
+    public Apple(int x, int y) {
         // load the assets
         loadImage();
 
@@ -25,7 +25,7 @@ public class Coin {
         try {
             // you can use just the filename if the image file is in your
             // project folder, otherwise you need to provide the file path.
-            image = ImageIO.read(new File("images/coin.png"));
+            image = ImageIO.read(new File("images/apple.png"));
         } catch (IOException exc) {
             System.out.println("Error opening image file: " + exc.getMessage());
         }

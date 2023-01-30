@@ -33,7 +33,7 @@ public class Player {
     private int length;
     
     public String direction;
-    private String directionUpdate;
+    
 
     private int speed;
     private int maxSpeed;
@@ -53,7 +53,7 @@ public class Player {
         posList.add(new Point(4,2));
 
         direction = "Right";
-        directionUpdate = "Right";
+        
         directionList.add("Right");
         directionList.add("Right");
         directionList.add("Right");
@@ -237,10 +237,15 @@ public class Player {
                 pos.translate(0,1);
             }else if(direction=="Left"){
                 pos.translate(-1,0);
-            }
+            }else{System.out.println("ERROR DIRECTION");System.exit(1);}
 
-            directionUpdate=direction;
+            
             speed=maxSpeed;
+            
+            //test if snake hit itself
+            for(Point i:posList){
+                if(pos.x==i.x&&pos.y==i.y){gameOver();}
+            }
 
             posList.add(new Point(pos.x,pos.y));
 
@@ -256,14 +261,12 @@ public class Player {
             }
             
 
-        //     for(String vegetable:directionList){
-        //     System.out.println(vegetable);
-        // }
+      
             
         upList();
        
-
-            
+        
+        
 
         }else{
             speed--;
@@ -271,6 +274,8 @@ public class Player {
         
         System.out.println("directionList:"+directionList);
         System.out.println("updateList:"+updateList);
+        System.out.println("direction:"+direction);
+
         System.out.println("break");
         
         
@@ -287,6 +292,8 @@ public class Player {
         } else if (pos.y >= Board.ROWS) {
             gameOver();
         }
+
+        
     }
 
     public String getScore() {

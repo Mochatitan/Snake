@@ -41,6 +41,7 @@ public class Player {
 
     List<Point> posList = new ArrayList<Point>();
     List<String> directionList = new ArrayList<String>();
+    List<String> updateList = new ArrayList<String>();
     public Player() {
         // load the assets
         loadImage();
@@ -56,10 +57,15 @@ public class Player {
         directionList.add("Right");
         directionList.add("Right");
         directionList.add("Right");
+
+        updateList.add("Right");
+        updateList.add("Right");
+        updateList.add("Right");
+        
         
 
         length = 3;
-        speed = 20;
+        speed = 4;
         maxSpeed=speed;
     }
 
@@ -91,32 +97,29 @@ public class Player {
         // position by multiplying by the tile size.
         for(int i = 0; i < posList.size(); i++){
             if(i==posList.size()-1){
-                switch(directionList.get(i)){
-            
+                switch(updateList.get(i)){
+                    
                     case "Up":
                         g.drawImage(headUpImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
                     break;
-        
                     case "Right":
                         g.drawImage(headRightImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
                     break;
-        
                     case "Down":
                         g.drawImage(headDownImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
                     break;
-        
                     case "Left":
                         g.drawImage(headLeftImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
                     break;
-                    
                     default:
-                        System.out.println("Direction ERROR: direction= "+direction+". directionList(i)= "+directionList.get(i));
+                        System.out.println("HEAD Direction ERROR: direction= "+direction+". directionList(i)= "+directionList.get(i)+"updateList:"+updateList);
                 }
+
 
             }else{
 
 
-        switch(directionList.get(i)){
+        switch(updateList.get(i)){
             
             case "Up":
                 g.drawImage(bodyVerticalImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
@@ -135,11 +138,23 @@ public class Player {
             break;
             
             case "UpLeft":
-
+                g.drawImage(bodyTopLeftImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
             break;
-            
+               
+            case "UpRight":
+                g.drawImage(bodyTopRightImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+            break;
+           
+            case "DownLeft":
+                g.drawImage(bodyBottomLeftImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+            break;
+
+            case "DownRight":
+                g.drawImage(bodyBottomRightImage, posList.get(i).x * Board.TILE_SIZE, posList.get(i).y * Board.TILE_SIZE, observer);
+            break;
+
             default:
-                System.out.println("Direction ERROR: direction= "+direction+". directionList(i)= "+directionList.get(i));
+                // System.out.println("BODY Direction ERROR: direction= "+direction+". directionList(i)= "+directionList.get(i)+"updateList:"+updateList);
         }
 
         
@@ -164,42 +179,50 @@ public class Player {
         //changing direction of snake based on key input
         if (key == KeyEvent.VK_UP && direction != "Down" && direction != "Up") {
             if(direction=="Right"){
-                directionList.set(length-1, "RightUp");
+                directionList.set(length-1, "UpLeft");
             }else if(direction=="Left"){
-                directionList.set(length-1, "LeftUp");
+                directionList.set(length-1, "UpRight");
             }else{System.out.println("error direction not found. direction:"+direction);}
             direction = "Up";
+            speed=0;
+
         }
+
         if (key == KeyEvent.VK_DOWN && direction != "Up" && direction != "Down") {
             if(direction=="Right"){
-                directionList.set(length-1, "RightDown");
+                directionList.set(length-1, "DownLeft");
             }else if(direction=="Left"){
-                directionList.set(length-1, "LeftDown");
-            }else{System.out.println("error direction not found. direction:"+direction);}
-            direction="Down";
-        }
-        if (key == KeyEvent.VK_RIGHT && direction != "Left" && direction != "Right") {
-            if(direction=="Up"){
-                directionList.set(length-1, "UpRight");
-            }else if(direction=="Down"){
                 directionList.set(length-1, "DownRight");
             }else{System.out.println("error direction not found. direction:"+direction);}
+            direction="Down";
+            speed=0;
+        }
+
+        if (key == KeyEvent.VK_RIGHT && direction != "Left" && direction != "Right") {
+            if(direction=="Up"){
+                directionList.set(length-1, "DownRight");
+            }else if(direction=="Down"){
+                directionList.set(length-1, "UpRight");
+            }else{System.out.println("error direction not found. direction:"+direction);}
             direction = "Right";
+            speed=0;
         }
         
         if (key == KeyEvent.VK_LEFT && direction != "Right" && direction != "Left") {
             if(direction=="Up"){
-                directionList.set(length-1, "UpLeft");
-            }else if(direction=="Down"){
                 directionList.set(length-1, "DownLeft");
+            }else if(direction=="Down"){
+                directionList.set(length-1, "UpLeft");
             }else{System.out.println("error direction not found. direction:"+direction);}
             direction="Left";
+            speed=0;
         }
     }
 
     public void tick() {
         // this gets called once every tick, before the repainting process happens.
         // so we can do anything needed in here to update the state of the player.
+       
         if(speed==0){
             //called every time the snake moves
             System.out.println("x: "+pos.getX());
@@ -231,32 +254,38 @@ public class Player {
             if(directionList.size()>length){
                 directionList.remove(0);
             }
-            for(String vegetable:directionList){
-            System.out.println(vegetable);
-        }
-        System.out.println("break");
+            
 
+        //     for(String vegetable:directionList){
+        //     System.out.println(vegetable);
+        // }
+            
+        upList();
+       
+
+            
 
         }else{
             speed--;
         }
         
-        
-        
+        System.out.println("directionList:"+directionList);
+        System.out.println("updateList:"+updateList);
+        System.out.println("break");
         
         
 
         // prevent the player from moving off the edge of the board sideways
         if (pos.x < 0) {
-            pos.x = 0;
+            gameOver();
         } else if (pos.x >= Board.COLUMNS) {
-            pos.x = Board.COLUMNS - 1;
+            gameOver();
         }
         // prevent the player from moving off the edge of the board vertically
         if (pos.y < 0) {
-            pos.y = 0;
+            gameOver();
         } else if (pos.y >= Board.ROWS) {
-            pos.y = Board.ROWS - 1;
+            gameOver();
         }
     }
 
@@ -274,6 +303,14 @@ public class Player {
 
     public String getDirection(){
         return direction;
+    }
+
+    public void upList(){
+        updateList =new ArrayList<String>(directionList);
+        
+    }
+    public void gameOver(){
+        System.exit(1);
     }
 
 }

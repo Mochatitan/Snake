@@ -6,6 +6,7 @@ import javax.swing.*;
 
 public class Board extends JPanel implements ActionListener, KeyListener {
 
+
     // controls the delay between each tick in ms
     private final int DELAY = 25;
     // controls the size of the board
@@ -162,7 +163,20 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 
         return appleList;
     }
+    private ArrayList<Apple> refreshApples() {
+        ArrayList<Apple> appleLs = new ArrayList<Apple>(apples);
+        Random rando = new Random();
 
+        for (int i = 0; i < NUM_APPLES; i++) {
+            int appleX = rando.nextInt(COLUMNS);
+            int appleY = rando.nextInt(ROWS);
+            appleLs.add(new Apple(appleX, appleY));
+        }
+
+        return appleLs;
+          
+    }
+    
     private void collectApples() {
         // allow player to pickup apples
         ArrayList<Apple> collectedApples = new ArrayList<>();
@@ -172,10 +186,15 @@ public class Board extends JPanel implements ActionListener, KeyListener {
                 // give the player some points for picking this up
                 player.addScore(1);
                 collectedApples.add(apple);
+                
+                
             }
         }
         // remove collected apples from the board
         apples.removeAll(collectedApples);
+        if(apples.size()==0){apples=refreshApples();}
+        
     }
-
+  
 }
+

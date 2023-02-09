@@ -11,8 +11,8 @@ public class Board extends JPanel implements ActionListener, KeyListener {
     private final int DELAY = 25;
     // controls the size of the board
     public static final int TILE_SIZE = 50;
-    public static final int ROWS = 12;
-    public static final int COLUMNS = 18;
+    public static final int ROWS = 20;
+    public static final int COLUMNS = 20;
     // controls how many apples appear on the board
     public static final int NUM_APPLES = 5;
     // suppress serialization warning
